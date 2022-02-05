@@ -55,7 +55,7 @@ class InteropHandler:
     def __init__(self, gs, config):
         self.logger = logging.getLogger("main")
         print("╠ CREATED INTEROP HANDLER")
-        self.logger.info("CREATED INTEROP ERROR")
+        self.logger.info("CREATED INTEROP HANDLER")
         self.gs = gs
         self.config = config
         self.mission_id = self.config["interop"]["mission_id"]
@@ -124,21 +124,9 @@ class InteropHandler:
         except Exception as e:
             raise GeneralError(str(e)) from e
 
-    def get_data(self, key="mission"):
+    def get_mission(self):
         try:
-            key_map = {
-                "mission": self.mission_dict,
-                "waypoints": self.waypoints_dict,
-                "obstacles": self.obstacles_dict,
-                "teams": self.teams_dict,
-                "search": self.search_grid_dict,
-                "ugv": self.ugv_points,
-                "odlc": self.odlc_points,
-                "lost_comms": self.lost_comms_pos_dict
-            }
-            if key and key in key_map:
-                return {"result": key_map[key]}
-            return {"result": key_map["mission"]}
+            return {"result": self.mission_dict}
         except RequestsCE as e:
             self.login_status = False
             self.login()

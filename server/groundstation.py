@@ -29,7 +29,7 @@ class GroundStation:
 
         self.func_map = {
             "i_login": self.interop.login,
-            "i_data": self.interop.get_data,  # key
+            "i_mission": self.interop.get_mission,  # key
             "i_telemetry": self.interop.get_telemetry,
 
             "i_odlcget": self.interop.odlc_get_queue,  # filter_val

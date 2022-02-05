@@ -3,7 +3,7 @@ import logging
 import math
 import random
 
-#from dronekit import Command
+from dronekit import Command
 from pymavlink import mavutil
 
 from errors import GeneralError, ServiceUnavailableError, InvalidRequestError
@@ -57,8 +57,8 @@ class DummyUAVHandler:
             self.throttle = random.randint(60, 80)
             # simulates the plane flying over waypoints
             if not self.waypoints:
-                self.waypoints = self.gs.call("i_data", "waypoints")
-                self.waypoints = self.waypoints["result"]
+                self.waypoints = self.gs.call("i_mission")
+                self.waypoints = self.waypoints["result"]["waypoints"]
                 self.waypoint_index = 1 % len(self.waypoints)
                 self.lat = self.waypoints[self.waypoint_index]["latitude"]
                 self.lon = self.waypoints[self.waypoint_index]["longitude"]
