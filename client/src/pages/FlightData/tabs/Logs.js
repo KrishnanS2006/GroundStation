@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from "react"
+import {httpget} from "backend"
+import {Column, Row} from "components/Containers"
+import {Button, CheckboxList} from "components/UIElements"
+import React, {useEffect, useRef, useState} from "react"
 import styled from "styled-components"
-import { Button, CheckboxList } from "components/UIElements"
-import { Column, Row } from "components/Containers"
-import { httpget } from "backend"
-import { dark, darkest, darkdark, red } from "theme/Colors"
+import {dark, darkdark, darkest, red} from "theme/Colors"
 
 const colors = {
 	DEBUG: darkdark,
@@ -15,108 +15,127 @@ const colors = {
 }
 
 const Logs = () => {
-	const [logs, setLogs] = useState([])
-	const [autoScroll, setAutoScroll] = useState(true)
-	const [filters, setFilters] = useState(["[INFO     ]", "[IMPORTANT]", "[WARNING  ]", "[ERROR    ]", "[CRITICAL ]"])
-	const [types, setTypes] = useState(["(groundstation)", "(autopilot)"])
-	const autoScrollRef = useRef()
-	const scrollDiv = useRef()
-	const container = useRef()
-	const logsRef = useRef()
-	const filtersRef = useRef()
-	autoScrollRef.current = autoScroll
-	logsRef.current = logs
-	filtersRef.current = filters
+  const [logs, setLogs] = useState([])
+  const [autoScroll, setAutoScroll] = useState(true)
+  const [filters, setFilters] = useState([
+    "[INFO     ]", "[IMPORTANT]", "[WARNING  ]", "[ERROR    ]", "[CRITICAL ]"
+  ])
+  const [types, setTypes] = useState([ "(groundstation)", "(autopilot)" ])
+  const autoScrollRef = useRef()
+  const scrollDiv = useRef()
+  const container = useRef()
+  const logsRef = useRef()
+  const filtersRef = useRef()
+  autoScrollRef.current = autoScroll
+  logsRef.current = logs
+  filtersRef.current = filters
 
-	const scrollToBottom = () => {
-		scrollDiv.current.scrollIntoView()
-	}
+  const scrollToBottom = () => { scrollDiv.current.scrollIntoView() }
 
-	const updateData = () => {
-		httpget("/logs", (response) => {
+  const updateData =
+      () => {
+                httpget("/logs", (response) => {
 			setLogs(response.data.result)
-			checkScrolling(true)
+                        checkScrolling(true)
 		})
-	}
+      }
 
-	const checkScrolling = (shouldScroll) => {
-		let scrollTop = container.current.scrollTop
-		let windowHeight = container.current.clientHeight
-		let scrollHeight = container.current.scrollHeight
-		if (scrollTop < scrollHeight - windowHeight && shouldScroll && autoScrollRef.current) {
-			scrollToBottom()
-		} else if (Math.ceil(scrollTop) < scrollHeight - windowHeight && !shouldScroll) {
-			setAutoScroll(false)
-		} else if (Math.ceil(scrollTop) === scrollHeight - windowHeight) {
-			setAutoScroll(true)
-		}
-	}
+  const checkScrolling =
+      (shouldScroll) => {
+        let scrollTop = container.current.scrollTop
+        let windowHeight = container.current.clientHeight
+        let scrollHeight = container.current.scrollHeight
+        if (scrollTop < scrollHeight - windowHeight && shouldScroll &&
+            autoScrollRef.current) {
+          scrollToBottom()
+        }
+        else if (Math.ceil(scrollTop) < scrollHeight - windowHeight &&
+                 !shouldScroll) {
+          setAutoScroll(false)
+        }
+        else if (Math.ceil(scrollTop) === scrollHeight - windowHeight) {
+          setAutoScroll(true)
+        }
+      }
 
-	useEffect(() => {
-		if (window.sessionStorage.getItem("logs")) {
-			setLogs(window.sessionStorage.getItem("logs").split("|||"))
-		}
-		if (window.sessionStorage.getItem("filters")) {
-			setFilters(window.sessionStorage.getItem("filters").split("|||"))
-		}
-		if (window.sessionStorage.getItem("autoScroll")) {
-			setAutoScroll(true)
-			scrollToBottom()
-		}
+  useEffect(() => {
+    if (window.sessionStorage.getItem("logs")) {
+      setLogs(window.sessionStorage.getItem("logs").split("|||"))
+    }
+    if (window.sessionStorage.getItem("filters")) {
+      setFilters(window.sessionStorage.getItem("filters").split("|||"))
+    }
+    if (window.sessionStorage.getItem("autoScroll")) {
+      setAutoScroll(true)
+      scrollToBottom()
+    }
 
-		const tick = setInterval(() => {
-			updateData()
-		}, 1000)
+    const tick = setInterval(() => {updateData()}, 1000)
 
-		return () => {
-			clearInterval(tick)
-			window.sessionStorage.setItem("logs", logsRef.length > 0 ? "" : logsRef.current.reduce((p, n) => {
-				return p + "|||" + n
-			}))
-			window.sessionStorage.setItem("filters", filtersRef.length > 0 ? "" : filtersRef.current.reduce((p, n) => {
-				return p + "|||" + n
-			}))
-			if (autoScrollRef.current) {
-				window.sessionStorage.setItem("autoScroll", true)
-			}
-		}
-	}, [])
+    return () => {
+      clearInterval(tick)
+      window.sessionStorage.setItem(
+          "logs", logsRef.length > 0 ? ""
+                                     : logsRef.current.reduce(
+                                           (p, n) => {return p + "|||" + n}))
+      window.sessionStorage.setItem(
+          "filters",
+          filtersRef.length > 0
+              ? ""
+              : filtersRef.current.reduce((p, n) => {return p + "|||" + n}))
+      if (autoScrollRef.current) {
+        window.sessionStorage.setItem("autoScroll", true)
+      }
+    }
+  }, [])
 
-	useEffect(() => { checkScrolling(false) })
+  useEffect(() => {checkScrolling(false)})
 
-	return (
-		<StyledContainer>
-			<CheckboxList name="logFilter" onChange={(e) => {
-					console.log(e.target.value)
-					if (e.target.checked) {
-						if (!filters.includes(e.target.value)) {
-							setFilters([...filters, e.target.value])
-						}
-					} else {
-						let i = filters.findIndex((f) => f === e.target.value)
-						if (i !== -1) {
-							setFilters([...filters.slice(0, i), ...filters.slice(i+1)])
-						}
-					}
-				}}
-			>
-				<Row>
-					<Column gap="0em">
-						<CheckboxList.Option checked={filters.includes("[DEBUG    ]")} value="[DEBUG    ]" color={colors.DEBUG}>Debug</CheckboxList.Option>
-						<CheckboxList.Option checked={filters.includes("[INFO     ]")} value="[INFO     ]" color={colors.INFO}>Info</CheckboxList.Option>
-						<CheckboxList.Option checked={filters.includes("[IMPORTANT]")} value="[IMPORTANT]" color={colors.IMPORTANT}>Important</CheckboxList.Option>
-					</Column>
-					<Column gap="0em">
-						<CheckboxList.Option checked={filters.includes("[WARNING  ]")} value="[WARNING  ]" color={colors.WARNING}>Warning</CheckboxList.Option>
-						<CheckboxList.Option checked={filters.includes("[ERROR    ]")} value="[ERROR    ]" color={colors.ERROR}>Error</CheckboxList.Option>
-						<CheckboxList.Option checked={filters.includes("[CRITICAL ]")} value="[CRITICAL ]" color={colors.CRITICAL}>Critical</CheckboxList.Option>
-					</Column>
-					<Column gap="0em">
-						<ScrollButton onChange={() => window.open("http://localhost:5000/logs")}>Open Log File</ScrollButton>
+  return (
+      <StyledContainer><CheckboxList name = "logFilter" onChange = {
+        (e) => {
+          console.log(e.target.value)
+          if (e.target.checked) {
+            if (!filters.includes(e.target.value)) {
+              setFilters([...filters, e.target.value ])
+            }
+          }
+          else {
+            let i = filters.findIndex((f) => f === e.target.value)
+            if (i !== -1) {
+              setFilters([...filters.slice(0, i), ...filters.slice(i + 1) ])
+            }
+          }
+        }
+      }><Row><Column gap = "0em">
+      <CheckboxList.Option checked = {filters.includes("[DEBUG    ]")} value =
+           "[DEBUG    ]" color = {colors.DEBUG}>
+          Debug<
+              /CheckboxList.Option>
+						<CheckboxList.Option checked={filters.includes("[INFO     ]")} value="[INFO     ]" color={colors.INFO}>Info</CheckboxList
+                  .Option>
+      <CheckboxList.Option checked = {filters.includes("[IMPORTANT]")} value =
+           "[IMPORTANT]" color = {colors.IMPORTANT}>
+          Important</CheckboxList.Option>
+					</Column><Column gap = "0em">
+      <CheckboxList.Option checked = {filters.includes("[WARNING  ]")} value =
+           "[WARNING  ]" color = {colors.WARNING}>
+          Warning<
+              /CheckboxList.Option>
+						<CheckboxList.Option checked={filters.includes("[ERROR    ]")} value="[ERROR    ]" color={colors.ERROR}>Error</CheckboxList
+                  .Option>
+      <CheckboxList.Option checked = {filters.includes("[CRITICAL ]")} value =
+           "[CRITICAL ]" color = {colors.CRITICAL}>
+          Critical</CheckboxList.Option>
+					</Column><Column gap = "0em">
+      <ScrollButton onChange = {() => window.open(
+                                    "http://localhost:5000/logs")}>Open Log
+          File<
+              /ScrollButton>
 						<ScrollButton onChange={() => { scrollDiv.current.scrollIntoView(); setAutoScroll(true) }}>Scroll To End</ScrollButton>
-					</Column>
+      </Column>
 				</Row>
-			</CheckboxList>
+      </CheckboxList>
 			<StyledLogsContainer ref={container}>
 				{logs?.filter((log) => {
 					for (let filter of filters) {
@@ -126,10 +145,10 @@ const Logs = () => {
 					}
 				}).map((log) => {
 					return (
-						<StyledLog content={log} />
-					)
-				})}
-				<div ref={scrollDiv} />
+						<StyledLog content={log} />)
+				})
+}
+                                <div ref={scrollDiv} />
 			</StyledLogsContainer>
 		</StyledContainer>
 	)
@@ -139,33 +158,34 @@ const StyledLog = ({ content }) => {
 	let type = content.replace(/\].*/, "").slice(1).trim()
 	content = content.replace(/\[.*?\]/, "[" + type + "]")
 
-	return (
-		<StyledLogContainer color={colors[type]}>
-			<StyledLogText color={colors[type]}>{content}</StyledLogText>
-		</StyledLogContainer>
-	)
-}
+                                return (
+                                    <StyledLogContainer color = {colors[type]}>
+                                    <StyledLogText color = {colors[type]}>{
+                                        content}<
+                                        /StyledLogText>
+		</StyledLogContainer>)
+                                }
 
-const ScrollButton = styled(Button)`
+                                const ScrollButton = styled(Button) `
 	margin: auto 0 0 auto;
 	width: 75%;
 	height: 1.5em;
 `
 
-const StyledContainer = styled.div`
+                                const StyledContainer = styled.div`
 	height: calc(100vh - 15rem);
 `
 
-const StyledLogText = styled.p`
+                                const StyledLogText = styled.p`
 	color: ${props => props.color};
 `
 
-const StyledLogContainer = styled.div`
+                                const StyledLogContainer = styled.div`
 	border-left: 5px solid ${props => props.color};
 	padding-left: 7px;
 `
 
-const StyledLogsContainer = styled.div`
+                                const StyledLogsContainer = styled.div`
 	background: ${dark};
 	margin-top: 0.5em;
 	padding: 1em 1em 1em 0.5em;
@@ -193,4 +213,4 @@ const StyledLogsContainer = styled.div`
 	}
 `
 
-export default Logs
+                                export default Logs
