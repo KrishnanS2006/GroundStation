@@ -52,7 +52,9 @@ class GroundStation:
 
     def telemetry_thread(self):
         while True:
-            if not self.interop.login_status:  # Connection to Interop Server is already lost
+            if (
+                not self.interop.login_status
+            ):  # Connection to Interop Server is already lost
                 try:
                     self.interop.login()  # Re-initiate connection
                     self.logger.important(
@@ -94,20 +96,25 @@ class GroundStation:
             time.sleep(0.1)
 
     def image_thread(self):
-        if self.config["uav"]["images"]["type"] == "prod":  # Initialize a socket connection
+        if (
+            self.config["uav"]["images"]["type"] == "prod"
+        ):  # Initialize a socket connection
             while True:
                 time.sleep(1)
                 try:
                     res = requests.get(
-                        f"{self.config['uav']['images']['url']}/last_image")
+                        f"{self.config['uav']['images']['url']}/last_image"
+                    )
                 except Exception:
                     self.logger.error(
-                        "[Image] Cannot connect to FlightSoftware, retrying in 5 seconds")
+                        "[Image] Cannot connect to FlightSoftware, retrying in 5 seconds"
+                    )
                     time.sleep(4)
                     continue
                 if res.status_code != 200:
                     self.logger.error(
-                        "[Image] Unable to retreive image count, retrying in 5 seconds")
+                        "[Image] Unable to retreive image count, retrying in 5 seconds"
+                    )
                     time.sleep(4)
                     continue
                 img_cnt = res.json()["result"]

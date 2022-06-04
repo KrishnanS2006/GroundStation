@@ -36,11 +36,9 @@ class ImageHandler:
     def retreive_image(self, img_cnt):
         for i in range(self.img_count, img_cnt):
             self.logger.info("Retreiving image %s", i)
-            img_res = requests.get(
-                self.config["uav"]["images"]["url"] + f"/image/{i}")
+            img_res = requests.get(self.config["uav"]["images"]["url"] + f"/image/{i}")
             if img_res.status_code == 200 and self.process_image(img_res.content):
-                self.logger.info(
-                    "[Image] Successfully identified ODLC from Image")
+                self.logger.info("[Image] Successfully identified ODLC from Image")
             time.sleep(1)
         self.img_count = img_cnt
 
@@ -50,8 +48,7 @@ class ImageHandler:
             with open("assets/odlc_images/sample.png", "rb") as image_file:
                 img = base64.b64encode(image_file.read())
             if self.process_image(img):  # Dummy Image
-                self.logger.info(
-                    "[Image] Successfully identified ODLC from Image")
+                self.logger.info("[Image] Successfully identified ODLC from Image")
                 return True
         return False
 

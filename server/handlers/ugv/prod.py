@@ -108,7 +108,9 @@ class UGVHandler:
             self.dest
         ) = (
             self.dist_to_dest
-        ) = self.battery = self.lat = self.lon = self.connection = self.mode = self.gps = None
+        ) = (
+            self.battery
+        ) = self.lat = self.lon = self.connection = self.mode = self.gps = None
         self.mode = VehicleMode("MANUAL")
         self.commands = []
         self.armed = False
@@ -121,8 +123,7 @@ class UGVHandler:
     def connect(self):
         try:
             if self.serial:
-                self.vehicle = connect(
-                    self.port, wait_ready=True, baud=BAUDRATE)
+                self.vehicle = connect(self.port, wait_ready=True, baud=BAUDRATE)
             else:
                 self.vehicle = connect(self.port, wait_ready=True)
             self.update()
@@ -146,8 +147,7 @@ class UGVHandler:
             self.lat = loc.lat
             self.lon = loc.lon
             self.gps = self.vehicle.gps_0
-            self.connection = [self.gps.eph,
-                               self.gps.epv, self.gps.satellites_visible]
+            self.connection = [self.gps.eph, self.gps.epv, self.gps.satellites_visible]
             self.mode = self.vehicle.mode
             if not self.droppos:
                 self.droppos = self.gs.interop.get_data("ugv")
@@ -155,8 +155,7 @@ class UGVHandler:
             x_dist = self.droppos["drop"]["latitude"] - self.lat
             y_dist = self.droppos["drop"]["longitude"] - self.lon
             # Conversion from decimal degrees to miles
-            x_dist_ft = x_dist * \
-                (math.cos(self.lat * math.pi / 180) * 69.172) * 5280
+            x_dist_ft = x_dist * (math.cos(self.lat * math.pi / 180) * 69.172) * 5280
             y_dist_ft = y_dist * 69.172 * 5280
             self.dist_to_dest = math.sqrt(x_dist_ft**2 + y_dist_ft**2)
             self.dest = [self.droppos, self.dist_to_dest]
@@ -244,7 +243,8 @@ class UGVHandler:
         try:
             return {
                 "result": dict(
-                    (keys, values) for keys, values in tuple(self.vehicle.parameters.items())
+                    (keys, values)
+                    for keys, values in tuple(self.vehicle.parameters.items())
                 )
             }
         except Exception as e:
@@ -255,7 +255,8 @@ class UGVHandler:
             print(float(value))
         except ValueError as e:
             raise InvalidRequestError(
-                "Parameter Value cannot be converted to float") from e
+                "Parameter Value cannot be converted to float"
+            ) from e
         try:
             self.vehicle.parameters[key] = value
             return {}
@@ -279,8 +280,9 @@ class UGVHandler:
     def save_params(self):
         try:
             with open(
-                os.path.join(os.path.dirname(
-                    os.path.abspath(__file__)), "ugv_params.json"),
+                os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)), "ugv_params.json"
+                ),
                 "w",
                 encoding="utf-8",
             ) as file:
@@ -292,8 +294,9 @@ class UGVHandler:
     def load_params(self):
         try:
             with open(
-                os.path.join(os.path.dirname(
-                    os.path.abspath(__file__)), "ugv_params.json"),
+                os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)), "ugv_params.json"
+                ),
                 "r",
                 encoding="utf-8",
             ) as file:

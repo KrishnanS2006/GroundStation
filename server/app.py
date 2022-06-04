@@ -8,7 +8,12 @@ from flask import Flask, jsonify, Response
 from flask_cors import CORS
 
 from app import interop, uav, ugv
-from errors import InvalidRequestError, InvalidStateError, GeneralError, ServiceUnavailableError
+from errors import (
+    InvalidRequestError,
+    InvalidStateError,
+    GeneralError,
+    ServiceUnavailableError,
+)
 from groundstation import GroundStation
 
 log = logging.getLogger("werkzeug")
@@ -47,7 +52,8 @@ autopilot = logging.getLogger("autopilot")
 autopilot.setLevel(logging.DEBUG)
 
 formatter = logging.Formatter(
-    "[%(levelname)-9s] (%(name)s) %(asctime)s  %(message)-500s")
+    "[%(levelname)-9s] (%(name)s) %(asctime)s  %(message)-500s"
+)
 
 # console_handler = logging.StreamHandler(sys.stdout)
 # console_handler.setLevel(logging.IMPORTANT)
