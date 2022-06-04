@@ -7,9 +7,15 @@ import os
 import typing
 from typing import Optional
 
-from dronekit import Command, Vehicle, VehicleMode, connect
-from errors import GeneralError, InvalidRequestError, InvalidStateError
-from handlers.utils import decorate_all_functions, log
+from dronekit import Command
+from dronekit import connect
+from dronekit import Vehicle
+from dronekit import VehicleMode
+from errors import GeneralError
+from errors import InvalidRequestError
+from errors import InvalidStateError
+from handlers.utils import decorate_all_functions
+from handlers.utils import log
 from pymavlink import mavutil as uavutil
 
 if typing.TYPE_CHECKING:

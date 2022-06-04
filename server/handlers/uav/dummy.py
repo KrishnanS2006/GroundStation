@@ -8,8 +8,11 @@ import random
 import typing
 
 from dronekit import Command
-from errors import GeneralError, InvalidRequestError, ServiceUnavailableError
-from handlers.utils import decorate_all_functions, log
+from errors import GeneralError
+from errors import InvalidRequestError
+from errors import ServiceUnavailableError
+from handlers.utils import decorate_all_functions
+from handlers.utils import log
 from pymavlink import mavutil as uavutil
 
 if typing.TYPE_CHECKING:

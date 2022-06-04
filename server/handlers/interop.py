@@ -5,14 +5,19 @@ import json
 import logging
 import os
 import typing
-from datetime import date, datetime, timedelta
+from datetime import date
+from datetime import datetime
+from datetime import timedelta
 
 from auvsi_suas.client import client
 from auvsi_suas.proto import interop_api_pb2 as interop
-from errors import (GeneralError, InvalidRequestError, InvalidStateError,
-                    ServiceUnavailableError)
+from errors import GeneralError
+from errors import InvalidRequestError
+from errors import InvalidStateError
+from errors import ServiceUnavailableError
 from google.protobuf import json_format
-from handlers.utils import decorate_all_functions, log
+from handlers.utils import decorate_all_functions
+from handlers.utils import log
 from requests.exceptions import ConnectionError as RequestsCE
 
 if typing.TYPE_CHECKING:

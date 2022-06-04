@@ -5,13 +5,16 @@ import logging
 import string
 import time
 import typing
-from random import choice, randint, random
+from random import choice
+from random import randint
+from random import random
 
 import eventlet
 import requests
 import socketio
 from dotenv import load_dotenv
-from handlers.utils import decorate_all_functions, log
+from handlers.utils import decorate_all_functions
+from handlers.utils import log
 
 load_dotenv()
 
