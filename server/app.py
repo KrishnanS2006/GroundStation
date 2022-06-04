@@ -46,7 +46,8 @@ logger.setLevel(logging.DEBUG)
 autopilot = logging.getLogger("autopilot")
 autopilot.setLevel(logging.DEBUG)
 
-formatter = logging.Formatter("[%(levelname)-9s] (%(name)s) %(asctime)s  %(message)-500s")
+formatter = logging.Formatter(
+    "[%(levelname)-9s] (%(name)s) %(asctime)s  %(message)-500s")
 
 # console_handler = logging.StreamHandler(sys.stdout)
 # console_handler.setLevel(logging.IMPORTANT)

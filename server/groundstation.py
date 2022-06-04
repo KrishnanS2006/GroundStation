@@ -98,13 +98,16 @@ class GroundStation:
             while True:
                 time.sleep(1)
                 try:
-                    res = requests.get(f"{self.config['uav']['images']['url']}/last_image")
+                    res = requests.get(
+                        f"{self.config['uav']['images']['url']}/last_image")
                 except Exception:
-                    self.logger.error("[Image] Cannot connect to FlightSoftware, retrying in 5 seconds")
+                    self.logger.error(
+                        "[Image] Cannot connect to FlightSoftware, retrying in 5 seconds")
                     time.sleep(4)
                     continue
                 if res.status_code != 200:
-                    self.logger.error("[Image] Unable to retreive image count, retrying in 5 seconds")
+                    self.logger.error(
+                        "[Image] Unable to retreive image count, retrying in 5 seconds")
                     time.sleep(4)
                     continue
                 img_cnt = res.json()["result"]

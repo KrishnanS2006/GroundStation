@@ -4,7 +4,8 @@ from functools import wraps
 from logging import Logger
 from typing import Callable
 
-log_exempt = ("update", "stats", "quick", "get_armed", "submit_telemetry", "odlc_get_queue", "odlc_add_to_queue", "process_image")
+log_exempt = ("update", "stats", "quick", "get_armed", "submit_telemetry",
+              "odlc_get_queue", "odlc_add_to_queue", "process_image")
 
 
 def log(func: Callable, logger: Logger) -> Callable:
@@ -19,8 +20,10 @@ def log(func: Callable, logger: Logger) -> Callable:
                 class_ = str(class_).split("'")[1]
             aargs = ", ".join(repr(x) for x in args[1:])
             kkwargs = ", ".join(f"{k}={v}" for k, v in kwargs.items())
-            all_args = aargs + ", " + kkwargs if (aargs and kkwargs) else aargs + kkwargs
-            logger.debug("{:<60}".format(f"{class_}.{func.__name__}({all_args})") + f"  -->  {res}")
+            all_args = aargs + ", " + \
+                kkwargs if (aargs and kkwargs) else aargs + kkwargs
+            logger.debug("{:<60}".format(
+                f"{class_}.{func.__name__}({all_args})") + f"  -->  {res}")
         return res
 
     return wrapper
@@ -47,7 +50,8 @@ def get_class_that_defined_method(meth):
         for cls in inspect.getmro(meth.__self__.__class__):
             if meth.__name__ in cls.__dict__:
                 return cls
-        meth = getattr(meth, "__func__", meth)  # fallback to __qualname__ parsing
+        # fallback to __qualname__ parsing
+        meth = getattr(meth, "__func__", meth)
     if inspect.isfunction(meth):
         cls = getattr(
             inspect.getmodule(meth),
@@ -56,4 +60,5 @@ def get_class_that_defined_method(meth):
         )
         if isinstance(cls, type):
             return cls
-    return getattr(meth, "__objclass__", None)  # handle special descriptor objects
+    # handle special descriptor objects
+    return getattr(meth, "__objclass__", None)

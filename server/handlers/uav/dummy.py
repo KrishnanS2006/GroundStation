@@ -98,7 +98,8 @@ class DummyUAVHandler:
             self.waypoint
         ) = self.waypoints = self.waypoint_index = self.temperature = self.params = self.gps = None
         with open(
-            os.path.join(os.path.dirname(os.path.abspath(__file__)), "uav_params.json"),
+            os.path.join(os.path.dirname(
+                os.path.abspath(__file__)), "uav_params.json"),
             "r",
             encoding="utf-8",
         ) as file:
@@ -127,7 +128,8 @@ class DummyUAVHandler:
             self.ground_speed = random.random() * 30 + 45
             self.air_speed = random.random() * 30 + 45
             self.battery = random.random() * 2 + 14
-            self.connection = [random.random(), random.random(), random.random() * 100]
+            self.connection = [random.random(), random.random(),
+                               random.random() * 100]
             # simulates the plane flying over waypoints
             if not self.waypoints:
                 self.waypoints = self.gs.interop.get_data("waypoints")
@@ -139,13 +141,15 @@ class DummyUAVHandler:
             y_dist = self.waypoints[self.waypoint_index]["longitude"] - self.lon
             dist = math.sqrt(x_dist**2 + y_dist**2)
             angle = math.atan2(y_dist, x_dist)
-            x_dist_ft = x_dist * (math.cos(self.lat * math.pi / 180) * 69.172) * 5280
+            x_dist_ft = x_dist * \
+                (math.cos(self.lat * math.pi / 180) * 69.172) * 5280
             y_dist_ft = y_dist * 69.172 * 5280
             self.dist_to_wp = math.sqrt(x_dist_ft**2 + y_dist_ft**2)
             if dist <= 0.0001:
                 self.lat = self.waypoints[self.waypoint_index]["latitude"]
                 self.lon = self.waypoints[self.waypoint_index]["longitude"]
-                self.waypoint_index = (self.waypoint_index + 1) % len(self.waypoints)
+                self.waypoint_index = (
+                    self.waypoint_index + 1) % len(self.waypoints)
             else:
                 self.lat = self.lat + math.cos(angle) * self.sim_speed
                 self.lon = self.lon + math.sin(angle) * self.sim_speed
@@ -224,7 +228,8 @@ class DummyUAVHandler:
         try:
             print(float(value))
         except ValueError as e:
-            raise InvalidRequestError("Parameter Value cannot be converted to float") from e
+            raise InvalidRequestError(
+                "Parameter Value cannot be converted to float") from e
         try:
             self.params[key] = value
             return {}
@@ -250,7 +255,8 @@ class DummyUAVHandler:
     def save_params(self):
         try:
             with open(
-                os.path.join(os.path.dirname(os.path.abspath(__file__)), "uav_params.json"),
+                os.path.join(os.path.dirname(
+                    os.path.abspath(__file__)), "uav_params.json"),
                 "w",
                 encoding="utf-8",
             ) as file:
@@ -262,7 +268,8 @@ class DummyUAVHandler:
     def load_params(self):
         try:
             with open(
-                os.path.join(os.path.dirname(os.path.abspath(__file__)), "uav_params.json"),
+                os.path.join(os.path.dirname(
+                    os.path.abspath(__file__)), "uav_params.json"),
                 "r",
                 encoding="utf-8",
             ) as file:
@@ -334,7 +341,8 @@ class DummyUAVHandler:
                 )
                 output += commandline
             with open(
-                os.path.join(os.path.dirname(os.path.abspath(__file__)), "uav_mission.txt"),
+                os.path.join(os.path.dirname(
+                    os.path.abspath(__file__)), "uav_mission.txt"),
                 "w",
                 encoding="utf-8",
             ) as file_:

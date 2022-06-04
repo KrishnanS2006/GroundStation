@@ -89,7 +89,8 @@ class DummyUGVHandler:
             self.dist_to_dest
         ) = self.battery = self.lat = self.lon = self.connection = self.mode = self.gps = None
         with open(
-            os.path.join(os.path.dirname(os.path.abspath(__file__)), "ugv_params.json"),
+            os.path.join(os.path.dirname(
+                os.path.abspath(__file__)), "ugv_params.json"),
             "r",
             encoding="utf-8",
         ) as file:
@@ -116,21 +117,25 @@ class DummyUGVHandler:
         try:
             self.ground_speed = random.random() * 30 + 45
             self.battery = random.random() * 2 + 14
-            self.connection = [random.random(), random.random(), random.random() * 100]
+            self.connection = [random.random(), random.random(),
+                               random.random() * 100]
             # simulates the ugv in the ugv boundary
             if not self.droppos:
                 self.droppos = self.gs.interop.get_data("ugv")
                 self.droppos = self.droppos["result"]
             if not self.lat:
-                self.lat = self.droppos["drop"]["latitude"]# + (random.random() - 0.5) / 2000
-                self.lon = self.droppos["drop"]["longitude"]# + (random.random() - 0.5) / 2000
+                # + (random.random() - 0.5) / 2000
+                self.lat = self.droppos["drop"]["latitude"]
+                # + (random.random() - 0.5) / 2000
+                self.lon = self.droppos["drop"]["longitude"]
             self.lat += (random.random() - 0.5) / 80000
             self.lon += (random.random() - 0.5) / 80000
             # ^^ remove after frr
             x_dist = self.droppos["drop"]["latitude"] - self.lat
             y_dist = self.droppos["drop"]["longitude"] - self.lon
             angle = math.atan2(y_dist, x_dist)
-            x_dist_ft = x_dist * (math.cos(self.lat * math.pi / 180) * 69.172) * 5280
+            x_dist_ft = x_dist * \
+                (math.cos(self.lat * math.pi / 180) * 69.172) * 5280
             y_dist_ft = y_dist * 69.172 * 5280
             self.dist_to_dest = math.sqrt(x_dist_ft**2 + y_dist_ft**2)
             self.dest = [self.droppos, self.dist_to_dest]
@@ -204,7 +209,8 @@ class DummyUGVHandler:
         try:
             print(float(value))
         except ValueError as e:
-            raise InvalidRequestError("Parameter Value cannot be converted to float") from e
+            raise InvalidRequestError(
+                "Parameter Value cannot be converted to float") from e
         try:
             self.params[key] = value
             return {}
@@ -230,7 +236,8 @@ class DummyUGVHandler:
     def save_params(self):
         try:
             with open(
-                os.path.join(os.path.dirname(os.path.abspath(__file__)), "ugv_params.json"),
+                os.path.join(os.path.dirname(
+                    os.path.abspath(__file__)), "ugv_params.json"),
                 "w",
                 encoding="utf-8",
             ) as file:
@@ -242,7 +249,8 @@ class DummyUGVHandler:
     def load_params(self):
         try:
             with open(
-                os.path.join(os.path.dirname(os.path.abspath(__file__)), "ugv_params.json"),
+                os.path.join(os.path.dirname(
+                    os.path.abspath(__file__)), "ugv_params.json"),
                 "r",
                 encoding="utf-8",
             ) as file:
@@ -266,7 +274,8 @@ class DummyUGVHandler:
         """
         try:
             missionlist = readmission(
-                os.path.join(os.path.dirname(os.path.abspath(__file__)), "ugv_mission.txt")
+                os.path.join(os.path.dirname(
+                    os.path.abspath(__file__)), "ugv_mission.txt")
             )
             for command in missionlist:
                 self.commands.append(command)

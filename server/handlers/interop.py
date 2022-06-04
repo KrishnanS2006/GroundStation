@@ -88,13 +88,17 @@ class InteropHandler:
             self.mission = self.client.get_mission(self.mission_id)
             self.mission_dict = json_format.MessageToDict(self.mission)
             self.teams = self.client.get_teams()
-            self.teams_dict = [json_format.MessageToDict(t) for t in self.teams]
+            self.teams_dict = [
+                json_format.MessageToDict(t) for t in self.teams]
             self.waypoints = self.mission.waypoints
-            self.waypoints_dict = [json_format.MessageToDict(w) for w in self.waypoints]
+            self.waypoints_dict = [
+                json_format.MessageToDict(w) for w in self.waypoints]
             self.search_grid = self.mission.search_grid_points
-            self.search_grid_dict = [json_format.MessageToDict(sg) for sg in self.search_grid]
+            self.search_grid_dict = [
+                json_format.MessageToDict(sg) for sg in self.search_grid]
             self.lost_comms_pos = self.mission.lost_comms_pos
-            self.lost_comms_pos_dict = json_format.MessageToDict(self.lost_comms_pos)
+            self.lost_comms_pos_dict = json_format.MessageToDict(
+                self.lost_comms_pos)
             self.odlc_points = {
                 "emergent": json_format.MessageToDict(self.mission.emergent_last_known_pos),
                 "off_axis": json_format.MessageToDict(self.mission.off_axis_odlc_pos),
@@ -107,7 +111,8 @@ class InteropHandler:
                 "drive": json_format.MessageToDict(self.mission.ugv_drive_pos),
             }
             self.obstacles = self.mission.stationary_obstacles
-            self.obstacles_dict = [json_format.MessageToDict(o) for o in self.obstacles]
+            self.obstacles_dict = [
+                json_format.MessageToDict(o) for o in self.obstacles]
             print("╠ INITIALIZED INTEROP HANDLER")
             self.logger.info("INITIALIZED INTEROP HANDLER")
             return {}
@@ -136,7 +141,8 @@ class InteropHandler:
             raise InvalidStateError(str(e)) from e
         except RequestsCE as e:
             self.login_status = False
-            raise ServiceUnavailableError("Could not establish connection to Interop") from e
+            raise ServiceUnavailableError(
+                "Could not establish connection to Interop") from e
         except Exception as e:
             raise GeneralError(str(e)) from e
 
@@ -174,7 +180,8 @@ class InteropHandler:
         if self.client is None:
             self.login_status = False
             self.login()
-            raise ServiceUnavailableError("Interop connection lost, attempted to re-initiate")
+            raise ServiceUnavailableError(
+                "Interop connection lost, attempted to re-initiate")
         try:
             telemetry = interop.Telemetry()
             uav_quick = self.gs.uav.quick()
@@ -290,7 +297,8 @@ class InteropHandler:
                 )
                 old_obj["alphanumeric"] = alpha if alpha else old_obj["alphanumeric"]
                 old_obj["alphanumeric_color"] = (
-                    int(alpha_color) if alpha_color else old_obj["alphanumeric_color"]
+                    int(
+                        alpha_color) if alpha_color else old_obj["alphanumeric_color"]
                 )
             self.odlc_queued_data[id_] = old_obj
             return {}
@@ -357,7 +365,8 @@ class InteropHandler:
                 self.odlc_queued_data = json.load(file)
                 for x, obj in enumerate(self.odlc_queued_data):
                     obj["created"] = datetime.fromisoformat(obj["created"])
-                    obj["auto_submit"] = datetime.fromisoformat(obj["auto_submit"])
+                    obj["auto_submit"] = datetime.fromisoformat(
+                        obj["auto_submit"])
                     self.odlc_queued_data[x] = obj
                 return {}
         except FileNotFoundError as e:
@@ -381,14 +390,16 @@ class InteropHandler:
     def map_submit(self, name=None):
         try:
             if not name:
-                self.submitted_map = base64.decodebytes(bytes(self.map_image, "utf-8"))
+                self.submitted_map = base64.decodebytes(
+                    bytes(self.map_image, "utf-8"))
                 self.client.put_map_image(self.mission_id, self.submitted_map)
             else:
                 if not os.path.isfile(f"assets/map_images/{name}.png"):
                     raise InvalidStateError("Map not found")
                 with open(f"assets/map_images/{name}.png", "rb") as file:
                     self.submitted_map = file.read()
-                    self.client.put_map_image(self.mission_id, self.submitted_map)
+                    self.client.put_map_image(
+                        self.mission_id, self.submitted_map)
             return {}
         except InvalidStateError as e:
             raise InvalidStateError(str(e)) from e
