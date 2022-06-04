@@ -1,23 +1,19 @@
 from __future__ import annotations
+
 import base64
 import json
 import logging
 import os
 import typing
-from datetime import datetime, timedelta, date
+from datetime import date, datetime, timedelta
 
 from auvsi_suas.client import client
 from auvsi_suas.proto import interop_api_pb2 as interop
+from errors import (GeneralError, InvalidRequestError, InvalidStateError,
+                    ServiceUnavailableError)
 from google.protobuf import json_format
-from requests.exceptions import ConnectionError as RequestsCE
-
-from errors import (
-    InvalidRequestError,
-    InvalidStateError,
-    GeneralError,
-    ServiceUnavailableError,
-)
 from handlers.utils import decorate_all_functions, log
+from requests.exceptions import ConnectionError as RequestsCE
 
 if typing.TYPE_CHECKING:
     from groundstation import GroundStation

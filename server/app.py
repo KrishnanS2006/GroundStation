@@ -4,16 +4,11 @@ import sys
 import traceback
 from io import StringIO
 
-from flask import Flask, jsonify, Response
-from flask_cors import CORS
-
 from app import interop, uav, ugv
-from errors import (
-    InvalidRequestError,
-    InvalidStateError,
-    GeneralError,
-    ServiceUnavailableError,
-)
+from errors import (GeneralError, InvalidRequestError, InvalidStateError,
+                    ServiceUnavailableError)
+from flask import Flask, Response, jsonify
+from flask_cors import CORS
 from groundstation import GroundStation
 
 log = logging.getLogger("werkzeug")

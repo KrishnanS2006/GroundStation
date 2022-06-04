@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import json
 import logging
 import math
@@ -7,10 +8,9 @@ import random
 import typing
 
 from dronekit import Command
-from pymavlink import mavutil as uavutil
-
-from errors import GeneralError, ServiceUnavailableError, InvalidRequestError
+from errors import GeneralError, InvalidRequestError, ServiceUnavailableError
 from handlers.utils import decorate_all_functions, log
+from pymavlink import mavutil as uavutil
 
 if typing.TYPE_CHECKING:
     from groundstation import GroundStation

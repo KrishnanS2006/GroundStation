@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import json
 import logging
 import math
@@ -6,11 +7,10 @@ import os
 import typing
 from typing import Optional
 
-from dronekit import connect, Command, VehicleMode, Vehicle
-from pymavlink import mavutil as uavutil
-
+from dronekit import Command, Vehicle, VehicleMode, connect
 from errors import GeneralError, InvalidRequestError, InvalidStateError
 from handlers.utils import decorate_all_functions, log
+from pymavlink import mavutil as uavutil
 
 if typing.TYPE_CHECKING:
     from groundstation import GroundStation

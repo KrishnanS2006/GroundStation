@@ -3,12 +3,9 @@ import logging
 import time
 from threading import Thread
 
-import requests
-
 import errors
-from handlers import DummyUAV, ProdUAV
-from handlers import DummyUGV, ProdUGV
-from handlers import Interop, Image
+import requests
+from handlers import DummyUAV, DummyUGV, Image, Interop, ProdUAV, ProdUGV
 
 
 class GroundStation:
