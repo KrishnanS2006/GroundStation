@@ -24,6 +24,7 @@ if typing.TYPE_CHECKING:
 
 @decorate_all_functions(log, logging.getLogger("groundstation"))
 class ImageHandler:
+
     def __init__(self, gs, config):
         self.logger = logging.getLogger("groundstation")
         self.gs: GroundStation = gs
@@ -39,9 +40,12 @@ class ImageHandler:
     def retreive_image(self, img_cnt):
         for i in range(self.img_count, img_cnt):
             self.logger.info("Retreiving image %s", i)
-            img_res = requests.get(self.config["uav"]["images"]["url"] + f"/image/{i}")
-            if img_res.status_code == 200 and self.process_image(img_res.content):
-                self.logger.info("[Image] Successfully identified ODLC from Image")
+            img_res = requests.get(self.config["uav"]["images"]["url"] +
+                                   f"/image/{i}")
+            if img_res.status_code == 200 and self.process_image(
+                    img_res.content):
+                self.logger.info(
+                    "[Image] Successfully identified ODLC from Image")
             time.sleep(1)
         self.img_count = img_cnt
 
@@ -51,7 +55,8 @@ class ImageHandler:
             with open("assets/odlc_images/sample.png", "rb") as image_file:
                 img = base64.b64encode(image_file.read())
             if self.process_image(img):  # Dummy Image
-                self.logger.info("[Image] Successfully identified ODLC from Image")
+                self.logger.info(
+                    "[Image] Successfully identified ODLC from Image")
                 return True
         return False
 
@@ -64,50 +69,44 @@ class ImageHandler:
                 self.gs.uav.lat,
                 self.gs.uav.lon,
                 self.gs.uav.orientation["yaw"],
-                choice(
-                    [
-                        "circle",
-                        "semicircle",
-                        "quarter_circle",
-                        "triangle",
-                        "square",
-                        "rectangle",
-                        "trapezoid",
-                        "pentagon",
-                        "hexagon",
-                        "heptagon",
-                        "octagon",
-                        "star",
-                        "cross",
-                    ]
-                ),
-                choice(
-                    [
-                        "white",
-                        "gray",
-                        "red",
-                        "blue",
-                        "green",
-                        "yellow",
-                        "purple",
-                        "brown",
-                        "orange",
-                    ]
-                ),
+                choice([
+                    "circle",
+                    "semicircle",
+                    "quarter_circle",
+                    "triangle",
+                    "square",
+                    "rectangle",
+                    "trapezoid",
+                    "pentagon",
+                    "hexagon",
+                    "heptagon",
+                    "octagon",
+                    "star",
+                    "cross",
+                ]),
+                choice([
+                    "white",
+                    "gray",
+                    "red",
+                    "blue",
+                    "green",
+                    "yellow",
+                    "purple",
+                    "brown",
+                    "orange",
+                ]),
                 choice(string.ascii_uppercase + string.digits),
-                choice(
-                    [
-                        "white",
-                        "gray",
-                        "red",
-                        "blue",
-                        "green",
-                        "yellow",
-                        "purple",
-                        "brown",
-                        "orange",
-                    ]
-                ),
+                choice([
+                    "white",
+                    "gray",
+                    "red",
+                    "blue",
+                    "green",
+                    "yellow",
+                    "purple",
+                    "brown",
+                    "orange",
+                ]),
             )
             return True
         return False

@@ -17,6 +17,7 @@ log_exempt = (
 
 
 def log(func: Callable, logger: Logger) -> Callable:
+
     @wraps(func)
     def wrapper(*args, **kwargs):
         res = None
@@ -28,19 +29,18 @@ def log(func: Callable, logger: Logger) -> Callable:
                 class_ = str(class_).split("'")[1]
             aargs = ", ".join(repr(x) for x in args[1:])
             kkwargs = ", ".join(f"{k}={v}" for k, v in kwargs.items())
-            all_args = (
-                aargs + ", " + kkwargs if (aargs and kkwargs) else aargs + kkwargs
-            )
+            all_args = (aargs + ", " + kkwargs if
+                        (aargs and kkwargs) else aargs + kkwargs)
             logger.debug(
-                "{:<60}".format(f"{class_}.{func.__name__}({all_args})")
-                + f"  -->  {res}"
-            )
+                "{:<60}".format(f"{class_}.{func.__name__}({all_args})") +
+                f"  -->  {res}")
         return res
 
     return wrapper
 
 
 def decorate_all_functions(function_decorator, *args, **kwargs):
+
     def decorator(cls):
         for name, obj in vars(cls).items():
             if callable(obj) and obj.__name__ not in log_exempt:
@@ -53,11 +53,9 @@ def decorate_all_functions(function_decorator, *args, **kwargs):
 def get_class_that_defined_method(meth):
     if isinstance(meth, functools.partial):
         return get_class_that_defined_method(meth.func)
-    if inspect.ismethod(meth) or (
-        inspect.isbuiltin(meth)
-        and getattr(meth, "__self__", None) is not None
-        and getattr(meth.__self__, "__class__", None)
-    ):
+    if inspect.ismethod(meth) or (inspect.isbuiltin(meth) and getattr(
+            meth, "__self__", None) is not None and getattr(
+                meth.__self__, "__class__", None)):
         for cls in inspect.getmro(meth.__self__.__class__):
             if meth.__name__ in cls.__dict__:
                 return cls

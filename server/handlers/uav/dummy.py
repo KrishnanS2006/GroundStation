@@ -81,31 +81,18 @@ class DummyUAVHandler:
         self.port = self.config["uav"]["telemetry"]["port"]
         self.serial = self.config["uav"]["telemetry"]["serial"]
         self.update_thread = None
-        self.altitude = (
-            self.orientation
-        ) = (
-            self.ground_speed
-        ) = (
+        self.altitude = (self.orientation) = (self.ground_speed) = (
             self.air_speed
-        ) = (
-            self.dist_to_wp
-        ) = (
-            self.battery
-        ) = (
-            self.lat
-        ) = (
-            self.lon
-        ) = (
+        ) = (self.dist_to_wp) = (self.battery) = (self.lat) = (self.lon) = (
             self.connection
-        ) = (
-            self.waypoint
-        ) = (
+        ) = (self.waypoint) = (
             self.waypoints
         ) = self.waypoint_index = self.temperature = self.params = self.gps = None
         with open(
-            os.path.join(os.path.dirname(os.path.abspath(__file__)), "uav_params.json"),
-            "r",
-            encoding="utf-8",
+                os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                             "uav_params.json"),
+                "r",
+                encoding="utf-8",
         ) as file:
             self.params = json.load(file)
         self.mode = "AUTO"
@@ -132,7 +119,11 @@ class DummyUAVHandler:
             self.ground_speed = random.random() * 30 + 45
             self.air_speed = random.random() * 30 + 45
             self.battery = random.random() * 2 + 14
-            self.connection = [random.random(), random.random(), random.random() * 100]
+            self.connection = [
+                random.random(),
+                random.random(),
+                random.random() * 100
+            ]
             # simulates the plane flying over waypoints
             if not self.waypoints:
                 self.waypoints = self.gs.interop.get_data("waypoints")
@@ -141,26 +132,30 @@ class DummyUAVHandler:
                 self.lat = self.waypoints[self.waypoint_index]["latitude"]
                 self.lon = self.waypoints[self.waypoint_index]["longitude"]
             x_dist = self.waypoints[self.waypoint_index]["latitude"] - self.lat
-            y_dist = self.waypoints[self.waypoint_index]["longitude"] - self.lon
+            y_dist = self.waypoints[
+                self.waypoint_index]["longitude"] - self.lon
             dist = math.sqrt(x_dist**2 + y_dist**2)
             angle = math.atan2(y_dist, x_dist)
-            x_dist_ft = x_dist * (math.cos(self.lat * math.pi / 180) * 69.172) * 5280
+            x_dist_ft = x_dist * (math.cos(self.lat * math.pi / 180) *
+                                  69.172) * 5280
             y_dist_ft = y_dist * 69.172 * 5280
             self.dist_to_wp = math.sqrt(x_dist_ft**2 + y_dist_ft**2)
             if dist <= 0.0001:
                 self.lat = self.waypoints[self.waypoint_index]["latitude"]
                 self.lon = self.waypoints[self.waypoint_index]["longitude"]
-                self.waypoint_index = (self.waypoint_index + 1) % len(self.waypoints)
+                self.waypoint_index = (self.waypoint_index + 1) % len(
+                    self.waypoints)
             else:
                 self.lat = self.lat + math.cos(angle) * self.sim_speed
                 self.lon = self.lon + math.sin(angle) * self.sim_speed
             self.waypoint = [self.waypoint_index + 1, self.dist_to_wp]
             self.orientation = {
-                "yaw": (angle / (2 * math.pi) * 360)
-                if angle >= 0
-                else (angle / (2 * math.pi) * 360 + 360),
-                "roll": random.random() * 60 - 30,
-                "pitch": random.random() * 40 - 20,
+                "yaw": (angle / (2 * math.pi) * 360) if angle >= 0 else
+                (angle / (2 * math.pi) * 360 + 360),
+                "roll":
+                random.random() * 60 - 30,
+                "pitch":
+                random.random() * 40 - 20,
             }
             return {}
         except KeyError as e:
@@ -230,8 +225,7 @@ class DummyUAVHandler:
             print(float(value))
         except ValueError as e:
             raise InvalidRequestError(
-                "Parameter Value cannot be converted to float"
-            ) from e
+                "Parameter Value cannot be converted to float") from e
         try:
             self.params[key] = value
             return {}
@@ -246,8 +240,7 @@ class DummyUAVHandler:
                     float(value)
                 except ValueError as e:
                     raise InvalidRequestError(
-                        "Parameter Value cannot be converted to float"
-                    ) from e
+                        "Parameter Value cannot be converted to float") from e
                 new_params[key] = float(value)
             self.params = new_params
             return {}
@@ -257,11 +250,10 @@ class DummyUAVHandler:
     def save_params(self):
         try:
             with open(
-                os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)), "uav_params.json"
-                ),
-                "w",
-                encoding="utf-8",
+                    os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                 "uav_params.json"),
+                    "w",
+                    encoding="utf-8",
             ) as file:
                 json.dump(self.params, file)
             return {}
@@ -271,11 +263,10 @@ class DummyUAVHandler:
     def load_params(self):
         try:
             with open(
-                os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)), "uav_params.json"
-                ),
-                "r",
-                encoding="utf-8",
+                    os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                 "uav_params.json"),
+                    "r",
+                    encoding="utf-8",
             ) as file:
                 self.params = json.load(file)
             return {}
@@ -341,15 +332,13 @@ class DummyUAVHandler:
                 commandline = (
                     f"{cmd.seq}\t{cmd.current}\t{cmd.frame}\t{cmd.command}\t"
                     f"{cmd.param1}\t{cmd.param2}\t{cmd.param3}\t{cmd.param4}\t{cmd.x}\t"
-                    f"{cmd.y}\t{cmd.z}\t{cmd.autocontinue}\n"
-                )
+                    f"{cmd.y}\t{cmd.z}\t{cmd.autocontinue}\n")
                 output += commandline
             with open(
-                os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)), "uav_mission.txt"
-                ),
-                "w",
-                encoding="utf-8",
+                    os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                 "uav_mission.txt"),
+                    "w",
+                    encoding="utf-8",
             ) as file_:
                 file_.write(output)
         except Exception as e:

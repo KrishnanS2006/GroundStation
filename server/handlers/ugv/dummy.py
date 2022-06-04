@@ -75,6 +75,7 @@ def readmission(filename):
 
 @decorate_all_functions(log, logging.getLogger("groundstation"))
 class DummyUGVHandler:
+
     def __init__(self, gs, config):
         self.logger = logging.getLogger("groundstation")
         self.gs: GroundStation = gs
@@ -82,21 +83,16 @@ class DummyUGVHandler:
         self.port = self.config["ugv"]["telemetry"]["port"]
         self.serial = self.config["ugv"]["telemetry"]["serial"]
         self.update_thread = None
-        self.yaw = (
-            self.ground_speed
-        ) = (
-            self.droppos
-        ) = (
-            self.dest
-        ) = (
+        self.yaw = (self.ground_speed) = (self.droppos) = (self.dest) = (
             self.dist_to_dest
         ) = (
             self.battery
         ) = self.lat = self.lon = self.connection = self.mode = self.gps = None
         with open(
-            os.path.join(os.path.dirname(os.path.abspath(__file__)), "ugv_params.json"),
-            "r",
-            encoding="utf-8",
+                os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                             "ugv_params.json"),
+                "r",
+                encoding="utf-8",
         ) as file:
             self.params = json.load(file)
         self.mode = "AUTO"
@@ -121,7 +117,11 @@ class DummyUGVHandler:
         try:
             self.ground_speed = random.random() * 30 + 45
             self.battery = random.random() * 2 + 14
-            self.connection = [random.random(), random.random(), random.random() * 100]
+            self.connection = [
+                random.random(),
+                random.random(),
+                random.random() * 100
+            ]
             # simulates the ugv in the ugv boundary
             if not self.droppos:
                 self.droppos = self.gs.interop.get_data("ugv")
@@ -137,15 +137,15 @@ class DummyUGVHandler:
             x_dist = self.droppos["drop"]["latitude"] - self.lat
             y_dist = self.droppos["drop"]["longitude"] - self.lon
             angle = math.atan2(y_dist, x_dist)
-            x_dist_ft = x_dist * (math.cos(self.lat * math.pi / 180) * 69.172) * 5280
+            x_dist_ft = x_dist * (math.cos(self.lat * math.pi / 180) *
+                                  69.172) * 5280
             y_dist_ft = y_dist * 69.172 * 5280
             self.dist_to_dest = math.sqrt(x_dist_ft**2 + y_dist_ft**2)
             self.dest = [self.droppos, self.dist_to_dest]
-            self.yaw = int(
-                (angle / (2 * math.pi) * 360)
-                if angle >= 0
-                else (angle / (2 * math.pi) * 360 + 360)
-            )
+            self.yaw = int((angle / (2 * math.pi) *
+                            360) if angle >= 0 else (angle /
+                                                     (2 * math.pi) * 360 +
+                                                     360))
             return {}
         except KeyError as e:
             raise ServiceUnavailableError("Interop Connection Lost") from e
@@ -212,8 +212,7 @@ class DummyUGVHandler:
             print(float(value))
         except ValueError as e:
             raise InvalidRequestError(
-                "Parameter Value cannot be converted to float"
-            ) from e
+                "Parameter Value cannot be converted to float") from e
         try:
             self.params[key] = value
             return {}
@@ -228,8 +227,7 @@ class DummyUGVHandler:
                     float(value)
                 except ValueError as e:
                     raise InvalidRequestError(
-                        "Parameter Value cannot be converted to float"
-                    ) from e
+                        "Parameter Value cannot be converted to float") from e
                 new_params[key] = float(value)
             self.params = new_params
             return {}
@@ -239,11 +237,10 @@ class DummyUGVHandler:
     def save_params(self):
         try:
             with open(
-                os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)), "ugv_params.json"
-                ),
-                "w",
-                encoding="utf-8",
+                    os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                 "ugv_params.json"),
+                    "w",
+                    encoding="utf-8",
             ) as file:
                 json.dump(self.params, file)
             return {}
@@ -253,11 +250,10 @@ class DummyUGVHandler:
     def load_params(self):
         try:
             with open(
-                os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)), "ugv_params.json"
-                ),
-                "r",
-                encoding="utf-8",
+                    os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                 "ugv_params.json"),
+                    "r",
+                    encoding="utf-8",
             ) as file:
                 self.params = json.load(file)
             return {}
@@ -279,10 +275,8 @@ class DummyUGVHandler:
         """
         try:
             missionlist = readmission(
-                os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)), "ugv_mission.txt"
-                )
-            )
+                os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                             "ugv_mission.txt"))
             for command in missionlist:
                 self.commands.append(command)
         except Exception as e:

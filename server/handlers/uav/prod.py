@@ -43,52 +43,38 @@ def pixhawk_stats(vehicle):
     print("   Release version: %s" % vehicle.version.release_version())
     print("   Stable release?: %s" % vehicle.version.is_stable())
     print(" Autopilot capabilities")
-    print(
-        "   Supports MISSION_FLOAT message type: %s"
-        % vehicle.capabilities.mission_float
-    )
-    print("   Supports PARAM_FLOAT message type: %s" % vehicle.capabilities.param_float)
-    print("   Supports MISSION_INT message type: %s" % vehicle.capabilities.mission_int)
-    print("   Supports COMMAND_INT message type: %s" % vehicle.capabilities.command_int)
-    print("   Supports PARAM_UNION message type: %s" % vehicle.capabilities.param_union)
+    print("   Supports MISSION_FLOAT message type: %s" %
+          vehicle.capabilities.mission_float)
+    print("   Supports PARAM_FLOAT message type: %s" %
+          vehicle.capabilities.param_float)
+    print("   Supports MISSION_INT message type: %s" %
+          vehicle.capabilities.mission_int)
+    print("   Supports COMMAND_INT message type: %s" %
+          vehicle.capabilities.command_int)
+    print("   Supports PARAM_UNION message type: %s" %
+          vehicle.capabilities.param_union)
     print("   Supports ftp for file transfers: %s" % vehicle.capabilities.ftp)
-    print(
-        "   Supports commanding attitude offboard: %s"
-        % vehicle.capabilities.set_attitude_target
-    )
+    print("   Supports commanding attitude offboard: %s" %
+          vehicle.capabilities.set_attitude_target)
     print(
         "   Supports commanding position and velocity targets in local NED frame: %s"
-        % vehicle.capabilities.set_attitude_target_local_ned
-    )
+        % vehicle.capabilities.set_attitude_target_local_ned)
     print(
         "   Supports set position + velocity targets in global scaled integers: %s"
-        % vehicle.capabilities.set_altitude_target_global_int
-    )
-    print(
-        "   Supports terrain protocol / data handling: %s"
-        % vehicle.capabilities.terrain
-    )
-    print(
-        "   Supports direct actuator control: %s"
-        % vehicle.capabilities.set_actuator_target
-    )
-    print(
-        "   Supports the flight termination command: %s"
-        % vehicle.capabilities.flight_termination
-    )
-    print(
-        "   Supports mission_float message type: %s"
-        % vehicle.capabilities.mission_float
-    )
-    print(
-        "   Supports onboard compass calibration: %s"
-        % vehicle.capabilities.compass_calibration
-    )
+        % vehicle.capabilities.set_altitude_target_global_int)
+    print("   Supports terrain protocol / data handling: %s" %
+          vehicle.capabilities.terrain)
+    print("   Supports direct actuator control: %s" %
+          vehicle.capabilities.set_actuator_target)
+    print("   Supports the flight termination command: %s" %
+          vehicle.capabilities.flight_termination)
+    print("   Supports mission_float message type: %s" %
+          vehicle.capabilities.mission_float)
+    print("   Supports onboard compass calibration: %s" %
+          vehicle.capabilities.compass_calibration)
     print(" Global Location: %s" % vehicle.location.global_frame)
-    print(
-        " Global Location (relative altitude): %s"
-        % vehicle.location.global_relative_frame
-    )
+    print(" Global Location (relative altitude): %s" %
+          vehicle.location.global_relative_frame)
     print(" Local Location: %s" % vehicle.location.local_frame)
     print(" Attitude: %s" % vehicle.attitude)
     print(" Velocity: %s" % vehicle.velocity)
@@ -182,25 +168,11 @@ class UAVHandler:
         self.serial = self.config["uav"]["telemetry"]["serial"]
         self.update_thread = None
         self.vehicle: Optional[Vehicle] = None
-        self.altitude = (
-            self.orientation
-        ) = (
-            self.ground_speed
-        ) = (
+        self.altitude = (self.orientation) = (self.ground_speed) = (
             self.air_speed
-        ) = (
-            self.dist_to_wp
-        ) = (
-            self.battery
-        ) = (
-            self.lat
-        ) = (
-            self.lon
-        ) = (
+        ) = (self.dist_to_wp) = (self.battery) = (self.lat) = (self.lon) = (
             self.connection
-        ) = (
-            self.waypoint
-        ) = (
+        ) = (self.waypoint) = (
             self.waypoints
         ) = self.waypoint_index = self.temperature = self.params = self.gps = None
         self.mode = VehicleMode("MANUAL")
@@ -215,7 +187,9 @@ class UAVHandler:
     def connect(self):
         try:
             if self.serial:
-                self.vehicle = connect(self.port, wait_ready=True, baud=BAUDRATE)
+                self.vehicle = connect(self.port,
+                                       wait_ready=True,
+                                       baud=BAUDRATE)
             else:
                 self.vehicle = connect(self.port, wait_ready=True)
             pixhawk_stats(self.vehicle)
@@ -238,12 +212,15 @@ class UAVHandler:
                 roll=rpy.roll * 180 / math.pi,
                 pitch=rpy.pitch * 180 / math.pi,
             )
-            self.orientation["yaw"] += 360 if self.orientation["yaw"] < 0 else 0
+            self.orientation[
+                "yaw"] += 360 if self.orientation["yaw"] < 0 else 0
             self.ground_speed = self.vehicle.groundspeed * self.mph
             self.air_speed = self.vehicle.airspeed * self.mph
             self.battery = battery.voltage  # * 0.001  # Millivolts to volts?
             self.gps = self.vehicle.gps_0
-            self.connection = [self.gps.eph, self.gps.epv, self.gps.satellites_visible]
+            self.connection = [
+                self.gps.eph, self.gps.epv, self.gps.satellites_visible
+            ]
             self.lat = loc.lat
             self.lon = loc.lon
             if not self.waypoints:
@@ -251,16 +228,18 @@ class UAVHandler:
                 self.waypoints = self.waypoints["result"]
                 self.waypoint_index = 1 % len(self.waypoints)
             x_dist = self.waypoints[self.waypoint_index]["latitude"] - self.lat
-            y_dist = self.waypoints[self.waypoint_index]["longitude"] - self.lon
+            y_dist = self.waypoints[
+                self.waypoint_index]["longitude"] - self.lon
             dist = math.sqrt(x_dist**2 + y_dist**2)  # Angular distance
             # Conversion from decimal degrees to miles
-            x_dist_ft = x_dist * (math.cos(self.lat * math.pi / 180) * 69.172) * 5280
+            x_dist_ft = x_dist * (math.cos(self.lat * math.pi / 180) *
+                                  69.172) * 5280
             y_dist_ft = y_dist * 69.172 * 5280
-            self.dist_to_wp = math.sqrt(
-                x_dist_ft**2 + y_dist_ft**2
-            )  # Distance in miles
+            self.dist_to_wp = math.sqrt(x_dist_ft**2 +
+                                        y_dist_ft**2)  # Distance in miles
             if dist <= 0.0001:  # Arbitrary value
-                self.waypoint_index = (self.waypoint_index + 1) % len(self.waypoints)
+                self.waypoint_index = (self.waypoint_index + 1) % len(
+                    self.waypoints)
             self.waypoint = [self.waypoint_index + 1, self.dist_to_wp]
             self.mode = self.vehicle.mode
             self.armed = self.vehicle.armed
@@ -330,8 +309,8 @@ class UAVHandler:
     def abort(self):
         try:
             msg = self.vehicle.message_factory.hil_controls_encode(
-                0, 1, 1, 1, 0, 1, 1, 1, 1, 220, 220
-            )  # ailerons right, elevator up, rudder right, throttle cut
+                0, 1, 1, 1, 0, 1, 1, 1, 1, 220,
+                220)  # ailerons right, elevator up, rudder right, throttle cut
             self.vehicle.send_mavlink(msg)
             return {}
         except Exception as e:
@@ -364,10 +343,10 @@ class UAVHandler:
     def get_params(self):
         try:
             return {
-                "result": dict(
+                "result":
+                dict(
                     (keys, values)
-                    for keys, values in tuple(self.vehicle.parameters.items())
-                )
+                    for keys, values in tuple(self.vehicle.parameters.items()))
             }
         except Exception as e:
             raise GeneralError(str(e)) from e
@@ -377,8 +356,7 @@ class UAVHandler:
             print(float(value))
         except ValueError as e:
             raise InvalidRequestError(
-                "Parameter Value cannot be converted to float"
-            ) from e
+                "Parameter Value cannot be converted to float") from e
         try:
             self.vehicle.parameters[key] = value
             return {}
@@ -392,8 +370,7 @@ class UAVHandler:
                     float(value)
                 except ValueError as e:
                     raise InvalidRequestError(
-                        "Parameter Value cannot be converted to float"
-                    ) from e
+                        "Parameter Value cannot be converted to float") from e
                 self.vehicle.parameters[key] = value
             return {}
         except Exception as e:
@@ -402,11 +379,10 @@ class UAVHandler:
     def save_params(self):
         try:
             with open(
-                os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)), "uav_params.json"
-                ),
-                "w",
-                encoding="utf-8",
+                    os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                 "uav_params.json"),
+                    "w",
+                    encoding="utf-8",
             ) as file:
                 json.dump(self.vehicle.parameters, file)
             return {}
@@ -416,11 +392,10 @@ class UAVHandler:
     def load_params(self):
         try:
             with open(
-                os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)), "uav_params.json"
-                ),
-                "r",
-                encoding="utf-8",
+                    os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                 "uav_params.json"),
+                    "r",
+                    encoding="utf-8",
             ) as file:
                 self.vehicle.parameters = json.load(file)
             return {}
@@ -482,10 +457,8 @@ class UAVHandler:
         """
         try:
             missionlist = readmission(
-                os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)), "uav_mission.txt"
-                )
-            )
+                os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                             "uav_mission.txt"))
             cmds = self.vehicle.commands
             cmds.clear()
             for command in missionlist:
@@ -507,15 +480,13 @@ class UAVHandler:
                 commandline = (
                     f"{cmd.seq}\t{cmd.current}\t{cmd.frame}\t{cmd.command}\t"
                     f"{cmd.param1}\t{cmd.param2}\t{cmd.param3}\t{cmd.param4}\t{cmd.x}\t"
-                    f"{cmd.y}\t{cmd.z}\t{cmd.autocontinue}\n"
-                )
+                    f"{cmd.y}\t{cmd.z}\t{cmd.autocontinue}\n")
                 output += commandline
             with open(
-                os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)), "uav_params.json"
-                ),
-                "w",
-                encoding="utf-8",
+                    os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                 "uav_params.json"),
+                    "w",
+                    encoding="utf-8",
             ) as file_:
                 file_.write(output)
             return {}

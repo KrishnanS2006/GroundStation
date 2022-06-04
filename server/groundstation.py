@@ -14,6 +14,7 @@ from handlers import ProdUGV
 
 
 class GroundStation:
+
     def __init__(self):
         self.logger = logging.getLogger("groundstation")
         with open("config.json", "r", encoding="utf-8") as file:
@@ -54,9 +55,8 @@ class GroundStation:
 
     def telemetry_thread(self):
         while True:
-            if (
-                not self.interop.login_status
-            ):  # Connection to Interop Server is already lost
+            if (not self.interop.login_status
+                ):  # Connection to Interop Server is already lost
                 try:
                     self.interop.login()  # Re-initiate connection
                     self.logger.important(
@@ -65,8 +65,7 @@ class GroundStation:
                 except errors.ServiceUnavailableError:
                     self.logger.info(
                         "[Telemetry] Unable to re-initiate connection with Interop "
-                        "Server, retrying in one second"
-                    )
+                        "Server, retrying in one second")
                 time.sleep(1)
                 continue
 
@@ -75,8 +74,7 @@ class GroundStation:
             except errors.ServiceUnavailableError:  # Lost connection to Interop
                 self.logger.critical(
                     "[Telemetry] Lost connection to Interop Server, attempting to "
-                    "re-initiate connection every second"
-                )
+                    "re-initiate connection every second")
                 continue
 
             if run:
@@ -98,15 +96,13 @@ class GroundStation:
             time.sleep(0.1)
 
     def image_thread(self):
-        if (
-            self.config["uav"]["images"]["type"] == "prod"
-        ):  # Initialize a socket connection
+        if (self.config["uav"]["images"]["type"] == "prod"
+            ):  # Initialize a socket connection
             while True:
                 time.sleep(1)
                 try:
                     res = requests.get(
-                        f"{self.config['uav']['images']['url']}/last_image"
-                    )
+                        f"{self.config['uav']['images']['url']}/last_image")
                 except Exception:
                     self.logger.error(
                         "[Image] Cannot connect to FlightSoftware, retrying in 5 seconds"

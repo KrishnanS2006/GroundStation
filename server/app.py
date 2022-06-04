@@ -53,8 +53,7 @@ autopilot = logging.getLogger("autopilot")
 autopilot.setLevel(logging.DEBUG)
 
 formatter = logging.Formatter(
-    "[%(levelname)-9s] (%(name)s) %(asctime)s  %(message)-500s"
-)
+    "[%(levelname)-9s] (%(name)s) %(asctime)s  %(message)-500s")
 
 # console_handler = logging.StreamHandler(sys.stdout)
 # console_handler.setLevel(logging.IMPORTANT)
@@ -91,14 +90,12 @@ def handle_error(e):
     logger.error(type(e).__name__)
     logger.debug("Traceback of %s : ", type(e).__name__, exc_info=e)
     return (
-        jsonify(
-            {
-                "title": "Unhandled Server Error",
-                "message": str(e),
-                "exception": type(e).__name__,
-                "traceback": traceback.format_tb(e.__traceback__),
-            }
-        ),
+        jsonify({
+            "title": "Unhandled Server Error",
+            "message": str(e),
+            "exception": type(e).__name__,
+            "traceback": traceback.format_tb(e.__traceback__),
+        }),
         500,
     )
 
@@ -108,14 +105,12 @@ def handle_400(e):
     logger.error(type(e).__name__)
     logger.debug("Traceback of %s : ", type(e).__name__, exc_info=e)
     return (
-        jsonify(
-            {
-                "title": "Invalid Request",
-                "message": str(e),
-                "exception": type(e).__name__,
-                "traceback": traceback.format_tb(e.__traceback__),
-            }
-        ),
+        jsonify({
+            "title": "Invalid Request",
+            "message": str(e),
+            "exception": type(e).__name__,
+            "traceback": traceback.format_tb(e.__traceback__),
+        }),
         400,
     )
 
@@ -125,14 +120,12 @@ def handle_409(e):
     logger.error(type(e).__name__)
     logger.debug("Traceback of %s : ", type(e).__name__, exc_info=e)
     return (
-        jsonify(
-            {
-                "title": "Invalid State Error",
-                "message": str(e),
-                "exception": type(e).__name__,
-                "traceback": traceback.format_tb(e.__traceback__),
-            }
-        ),
+        jsonify({
+            "title": "Invalid State Error",
+            "message": str(e),
+            "exception": type(e).__name__,
+            "traceback": traceback.format_tb(e.__traceback__),
+        }),
         409,
     )
 
@@ -142,14 +135,12 @@ def handle_500(e):
     logger.error(type(e).__name__)
     logger.debug("Traceback of %s : ", type(e).__name__, exc_info=e)
     return (
-        jsonify(
-            {
-                "title": "Server Error",
-                "message": str(e),
-                "exception": type(e).__name__,
-                "traceback": traceback.format_tb(e.__traceback__),
-            }
-        ),
+        jsonify({
+            "title": "Server Error",
+            "message": str(e),
+            "exception": type(e).__name__,
+            "traceback": traceback.format_tb(e.__traceback__),
+        }),
         500,
     )
 
@@ -159,14 +150,12 @@ def handle_503(e):
     logger.error(type(e).__name__)
     logger.debug("Traceback of %s : ", type(e).__name__, exc_info=e)
     return (
-        jsonify(
-            {
-                "title": "Service Unavailable Error",
-                "message": str(e),
-                "exception": type(e).__name__,
-                "traceback": traceback.format_tb(e.__traceback__),
-            }
-        ),
+        jsonify({
+            "title": "Service Unavailable Error",
+            "message": str(e),
+            "exception": type(e).__name__,
+            "traceback": traceback.format_tb(e.__traceback__),
+        }),
         503,
     )
 
