@@ -1,27 +1,27 @@
 {
-    "uav": {
-        "telemetry": {
-            "type": "dummy",
-            "port": "tcp:127.0.0.1:5760",
-            "serial": false
-        },
-        "images": {
-            "type": "dummy",
-            "url": "http://192.168.1.99:4000"
-        }
+  "uav": {
+    "telemetry": {
+      "type": "dummy",
+      "port": "tcp:127.0.0.1:5760",
+      "serial": false
     },
-    "ugv": {
-        "telemetry": {
-            "type": "dummy",
-            "port": "tcp:127.0.0.1:5760",
-            "serial": false
-        }
-    },
-    "interop": {
-        "url": "http://localhost:8000",
-        "username": "testuser",
-        "password": "testpass",
-        "mission_id": 1
-    },
-    "debug_log": false
+    "images": {
+      "type": "dummy",
+      "url": "http://192.168.1.99:4000"
+    }
+  },
+  "ugv": {
+    "telemetry": {
+      "type": "dummy",
+      "port": "tcp:127.0.0.1:5760",
+      "serial": false
+    }
+  },
+  "interop": {
+    "url": "http://localhost:8000",
+    "username": "testuser",
+    "password": "testpass",
+    "mission_id": 1
+  },
+  "debug_log": false
 }
