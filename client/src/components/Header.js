@@ -2,8 +2,9 @@ import React, { useEffect, useRef, useState } from "react"
 import { Row, Modal, ModalBody, ModalHeader } from "components/Containers"
 import { darker } from "theme/Colors"
 import styled from "styled-components"
-import { Box, Button } from "./UIElements"
+import { Box, Button, SettingsButton } from "./UIElements"
 import { getUrl, setUrl } from "../backend"
+import settingsGear from "../icons/settingsGear.svg"
 
 const NavContainer = styled.div`
 	background: ${darker};
@@ -39,11 +40,12 @@ const ConnectionButton = (props) => {
 
 	return (
 		<div>
-			<Button style={{ "width": "3em", "margin-top": "0.75em" }} onChange={() => {
+			<SettingsButton style={{ "width": "3em", "margin-top": "0.75em" }} onChange={() => {
 				setOpen(true)
 			}}>
-				Con
-			</Button>
+				<img src={settingsGear} width="35" height="35em"/>
+			</SettingsButton>
+
 			<Modal open={open} setOpen={setOpen}>
 				<ModalHeader>Backend Connection</ModalHeader>
 				<ModalBody>
