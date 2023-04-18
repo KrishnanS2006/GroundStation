@@ -141,6 +141,9 @@ cython_debug/
 .vscode/
 .idea/
 
+# Macs
+/**/.DS_Store
+
 # Custom
 /interop/
 /client/node_modules/
